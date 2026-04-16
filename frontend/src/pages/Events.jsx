@@ -380,12 +380,13 @@ const Events = () => {
         setSuccess("");
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/events/${eventId}/generate-qr`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/event/qr/generate`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
+                body: JSON.stringify({ eventId }), // pass eventId in body
             });
 
             const data = await response.json();
