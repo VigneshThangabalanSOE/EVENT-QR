@@ -93,39 +93,38 @@ const Events = () => {
         }
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/events/create-event`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    name: eventName,
-                    description: eventDescription,
-                    date: eventDate,
-                    sheetId,
-                    sheetName,
-                }),
-            });
+                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/events/create-event`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        name: eventName,
+                        description: eventDescription,
+                        date: eventDate,
+                        sheetId,
+                        sheetName,
+                    }),
+                });
 
-            const data = await response.json();
+                const data = await response.json(); // read ONCE, reuse below
 
-            if (!response.ok) {
-                throw new Error(data.message || "Failed to create event.");
+                if (!response.ok) {
+                    throw new Error(data.message || "Failed to create event.");
+                }
+
+                setSuccess("Event created successfully!");
+                setEventName("");
+                setEventDescription("");
+                setEventDate("");
+                setSheetId("");
+                setSheetName("");
+                setIsModalOpen(false);
+                setEvents((prevEvents) => [...prevEvents, data]); // ← use `data` directly
+            }   catch (err) {
+                setError(err.message);
             }
-
-            setSuccess("Event created successfully!");
-            setEventName("");
-            setEventDescription("");
-            setEventDate("");
-            setSheetId("");
-            setSheetName("");
-            setIsModalOpen(false);
-            const updatedEvents = await response.json();
-            setEvents((prevEvents) => [...prevEvents, updatedEvents]);
-        } catch (err) {
-            setError(err.message);
-        }
     };
 
     return (
