@@ -78,54 +78,39 @@ const Events = () => {
         fetchEvents();
     }, [navigate]);
 
-    const handleCreateEvent = async () => {
-        if (!eventName || !eventDescription || !eventDate || !sheetId || !sheetName) {
-            setError("All fields are required.");
-            return;
-        }
-
-        setError("");
-        setSuccess("");
-
-        const token = localStorage.getItem("token");
-        if (!token) {
-            setError("You must be logged in to create an event.");
-            return;
-        }
-
-        try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/events/create-event`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    name: eventName,
-                    description: eventDescription,
-                    date: eventDate,
-                    sheetId,
-                    sheetName,
-                }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || "Failed to create event.");
+    const handleGenerateQR = async (eventId) => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                setError("You must be logged in.");
+                return;
             }
 
-            setSuccess("Event created successfully!");
-            setEventName("");
-            setEventDescription("");
-            setEventDate("");
-            setSheetId("");
-            setSheetName("");
-            setIsModalOpen(false);
-            setEvents((prevEvents) => [...prevEvents, data]);
-        } catch (err) {
-            setError(err.message);
-        }
+            setGeneratingQR(eventId);
+            setError("");
+            setSuccess("");
+
+            try {
+                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/event/qr/generate`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ eventId }), // ✅ this was missing
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Failed to generate QR codes.");
+                }
+
+                setSuccess("QR codes generated successfully! Check your Google Sheet.");
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setGeneratingQR(null);
+            }
     };
 
     const handleGenerateQR = async (eventId) => {
