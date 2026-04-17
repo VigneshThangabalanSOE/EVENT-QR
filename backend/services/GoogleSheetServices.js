@@ -2,8 +2,9 @@ import { google } from "googleapis";
 const sheets = google.sheets('v4');
 
 const getAuth = async() => {
+    const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
     const auth = new google.auth.GoogleAuth({
-        keyFile: "./google.json",
+        credentials,
         scopes: "https://www.googleapis.com/auth/spreadsheets",
     })
     return await auth.getClient();
