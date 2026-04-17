@@ -1,5 +1,4 @@
 import { getAuth, getSpreadSheetValues, updateSpreadSheetsValues } from "../services/GoogleSheetServices.js";
-import { sendMail } from "../services/NodeMailerServices.js";
 import QRCode from "qrcode";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -112,12 +111,7 @@ export const generateQR = async (req, res, next) => {
                 sheets.values[i + j][2] = generatedQRCode;
             }
 
-            // Step 2: Send emails for this batch
-            for (let j = 0; j < batch.length; j++) {
-                await sendMail(i + j, sheets, sheetId, sheetName, auth);
-            }
-
-            // Step 3: Delay before next batch to avoid rate limiting
+            // Step 2: Delay before next batch to avoid rate limiting
             if (i + batchSize < sheets.values.length) {
                 await delay(5000);
             }
