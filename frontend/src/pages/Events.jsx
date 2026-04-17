@@ -78,6 +78,50 @@ const Events = () => {
         fetchEvents();
     }, [navigate]);
 
+    const handleCreateEvent = async () => {
+        setError("");
+        const token = localStorage.getItem("token");
+        if (!token) { navigate("/login"); return; }
+
+        if (!eventName || !eventDescription || !sheetId || !sheetName) {
+            setError("All fields are required.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/events/create-event`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    name: eventName,
+                    description: eventDescription,
+                    sheetId,
+                    sheetName,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Failed to create event.");
+            }
+
+            setEvents((prev) => [...prev, data]);
+            setIsModalOpen(false);
+            setEventName("");
+            setEventDescription("");
+            setEventDate("");
+            setSheetId("");
+            setSheetName("");
+            setSuccess("Event created successfully!");
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
     const handleGenerateQR = async (eventId) => {
             const token = localStorage.getItem("token");
             if (!token) {
