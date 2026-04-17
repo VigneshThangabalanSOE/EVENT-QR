@@ -113,39 +113,39 @@ const Events = () => {
             }
     };
 
-    const handleGenerateQR = async (eventId) => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            setError("You must be logged in.");
-            return;
-        }
+    // const handleGenerateQR = async (eventId) => {
+    //     const token = localStorage.getItem("token");
+    //     if (!token) {
+    //         setError("You must be logged in.");
+    //         return;
+    //     }
 
-        setGeneratingQR(eventId);
-        setError("");
-        setSuccess("");
+    //     setGeneratingQR(eventId);
+    //     setError("");
+    //     setSuccess("");
 
-        try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/event/qr/generate`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+    //     try {
+    //         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/event/qr/generate`, {
+    //             method: "POST",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 Authorization: `Bearer ${token}`,
+    //             },
+    //         });
 
-            const data = await response.json();
+    //         const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.message || "Failed to generate QR codes.");
-            }
+    //         if (!response.ok) {
+    //             throw new Error(data.message || "Failed to generate QR codes.");
+    //         }
 
-            setSuccess("QR codes generated successfully! Check your Google Sheet.");
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setGeneratingQR(null);
-        }
-    };
+    //         setSuccess("QR codes generated successfully! Check your Google Sheet.");
+    //     } catch (err) {
+    //         setError(err.message);
+    //     } finally {
+    //         setGeneratingQR(null);
+    //     }
+    // };
 
     return (
         <div className="flex flex-col items-center justify-start min-h-screen bg-white text-gray-800 pt-6">
